@@ -322,7 +322,7 @@ static List<DisplayItem> get newReleases => [
     },
     {
       'id': '8', 'title': 'Happier Than Ever', 'artist': 'Billie Eilish',
-      'year': '2021', 'genre': 'Pop', 'color': '0xFF33691E',
+      'year': '2021', 'genre': 'Pop', 'color': '0xFFE0D6CD',
       'imageUrl': 'assets/images/spotify albums/Billie_Eilish_-_Happier_Than_Ever.jpg',
       'tracks': [
         {'id': '8-1', 'title': 'Getting Older', 'duration': '4:05'},
@@ -832,7 +832,7 @@ static List<DisplayItem> get newReleases => [
     },
     {
       'id': '34', 'title': 'Boys Club Vol. 1', 'artist': 'Beri Boys',
-      'year': '2025', 'genre': 'Hip-Hop', 'color': '0xFF4A148C',
+      'year': '2025', 'genre': 'Hip-Hop', 'color': '0xFF0C1E1E',
       'imageUrl': 'assets/images/spotify albums/beri boys clu vol1.jpg',
       'tracks': [
         {'id': '34-1',  'title': 'Nous deux (feat. Bvfy)',                   'duration': '4:27'},
@@ -850,7 +850,7 @@ static List<DisplayItem> get newReleases => [
     },
     {
       'id': '35', 'title': 'Beri to the World', 'artist': 'Beri Boys',
-      'year': '2026', 'genre': 'Hip-Hop', 'color': '0xFF006064',
+      'year': '2026', 'genre': 'Hip-Hop', 'color': '0xFFCBA068',
       'imageUrl': 'assets/images/spotify albums/Beri To The World.jpg',
       'tracks': [
         {'id': '35-1',  'title': 'God Bless',                             'duration': '3:06'},

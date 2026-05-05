@@ -6,6 +6,8 @@ import 'widgets/asset_or_net_img.dart';
 import 'pages/home_tab.dart';
 import 'pages/search_tab.dart';
 import 'pages/library_tab.dart';
+import 'pages/premium_tab.dart';
+import 'pages/create_tab.dart';
 import 'pages/now_playing_page.dart';
 import 'utils/nav_helpers.dart';
 
@@ -52,7 +54,16 @@ class _MainShellState extends State<MainShell> {
         return Scaffold(
           backgroundColor: const Color(0xFF121212),
           body: Stack(children: [
-            IndexedStack(index: _tab, children: const [HomeTab(), SearchTab(), LibraryTab()]),
+            IndexedStack(
+              index: _tab,
+              children: const [
+                HomeTab(),
+                SearchTab(),
+                LibraryTab(),
+                PremiumTab(),  // add this
+                CreateTab(),   // add this
+              ],
+            ),
             if (player.currentTrack != null)
               Positioned(bottom: 0, left: 0, right: 0, child: MiniPlayer()),
           ]),
@@ -76,26 +87,63 @@ class MiniPlayer extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         height: 64,
         decoration: BoxDecoration(
-          color: t.accentColor.withOpacity(0.96),
-          borderRadius: BorderRadius.circular(8),
+          color: t.accentColor.withOpacity(0.85),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.55), blurRadius: 20, offset: const Offset(0, 6))],
         ),
         child: Row(children: [
-          const SizedBox(width: 8),
+          // Album art — fills full height
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: AssetOrNetImg(url: t.imageUrl, size: 48),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+            ),
+            child: SizedBox(
+              width: 64,
+              height: 64,
+              child: AssetOrNetImg(url: t.imageUrl, size: 64, fit: BoxFit.cover),
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
+          // Title + artist
           Expanded(
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(t.title,  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
-              Text(t.artist, style: const TextStyle(color: Colors.white70, fontSize: 11)),
-            ]),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.title,
+                  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  t.artist,
+                  style: const TextStyle(color: Colors.white70, fontSize: 11),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-          IconButton(icon: const Icon(Icons.favorite_border, color: Colors.white, size: 22), onPressed: () {}),
-          IconButton(icon: Icon(player.isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white, size: 28), onPressed: player.togglePlay),
-          IconButton(icon: const Icon(Icons.skip_next, color: Colors.white, size: 26), onPressed: player.skipNext),
+          // Devices icon
+          IconButton(
+            icon: const Icon(Icons.devices, color: Colors.white, size: 22),
+            onPressed: () {},
+          ),
+          // Play/Pause
+          ListenableBuilder(
+            listenable: player,
+            builder: (_, __) => IconButton(
+              icon: Icon(
+                player.isPlaying ? Icons.pause : Icons.play_arrow,
+                color: Colors.white,
+                size: 28,
+              ),
+              onPressed: player.togglePlay,
+            ),
+          ),
           const SizedBox(width: 4),
         ]),
       ),
