@@ -5,6 +5,27 @@ import '../models/artist.dart';
 import '../models/display_item.dart';
 import '../utils/helpers.dart';
 
+class SpotifyCategory {
+  final String name;
+  final Color color;
+  final String imageUrl;
+  final String heroImageUrl;
+
+  const SpotifyCategory({
+    required this.name,
+    required this.color,
+    required this.imageUrl,
+    required this.heroImageUrl,
+  });
+}
+
+class CategorySection {
+  final String title;
+  final List<DisplayItem> items;
+
+  const CategorySection({required this.title, required this.items});
+}
+
 class SpotifyData {
   static final List<SpotifyAlbum> albums = _buildAlbums();
 
@@ -77,7 +98,13 @@ class SpotifyData {
       artist.albumIds.map(albumById).whereType<SpotifyAlbum>().toList();
 
   static final List<String> _favouriteArtistIds = [
-    'a-2', 'a-7', 'a-8', 'a-12', 'a-6', 'a-4', 'a-1'
+    'a-2',
+    'a-7',
+    'a-8',
+    'a-12',
+    'a-6',
+    'a-4',
+    'a-1',
   ];
 
   static List<SpotifyArtist> get favouriteArtists => _favouriteArtistIds
@@ -112,59 +139,320 @@ class SpotifyData {
       .toList();
 
   static List<DisplayItem> get madeForYou => [
-        _mfyItem('mfy-1', 'Daily Mix 1', 'The Weeknd, SZA and more',
-            albumById('1')?.imageUrl ?? '', const Color(0xFFB71C1C),
-            ['1-9', '4-9', '1-2', '4-2', '1-7']),
-        _mfyItem('mfy-2', 'Daily Mix 2', 'Kendrick Lamar, Drake and more',
-            albumById('2')?.imageUrl ?? '', const Color(0xFF4A148C),
-            ['2-8', '18-12', '2-2', '19-5', '20-5']),
-        _mfyItem('mfy-3', 'Daily Mix 3', 'Nekfeu, Josman and more',
-            albumById('24')?.imageUrl ?? '', const Color(0xFF212121),
-            ['24-1', '22-1', '25-1', '23-2', '26-1']),
-        _mfyItem('mfy-4', 'Discover Weekly', 'Fresh picks for you',
-            albumById('21')?.imageUrl ?? '', const Color(0xFF1B5E20),
-            ['21-2', '30-2', '16-2']),
-        _mfyItem('mfy-5', 'Release Radar', 'New music from artists you follow',
-            albumById('35')?.imageUrl ?? '', const Color(0xFF006064),
-            ['35-1', '35-2', '34-1']),
-      ];
-
-  static DisplayItem _mfyItem(String id, String title, String desc,
-          String img, Color color, List<String> trackIds) =>
-      DisplayItem(
-        id: id,
-        title: title,
-        description: desc,
-        imageUrl: img,
-        color: color,
-        tracks: tracksForIds(trackIds),
-      );
-
-static List<DisplayItem> get topCharts => [
-    '5', '4', '3', '7', '10'
-  ].map(albumById).whereType<SpotifyAlbum>().map(DisplayItem.fromAlbum).toList();
-  
-static List<DisplayItem> get newReleases => [
-  '35', '34', '8', '9', '11'
-].map(albumById).whereType<SpotifyAlbum>().map(DisplayItem.fromAlbum).toList();
-
-  static final List<Map<String, String>> genres = [
-    {'name': 'Pop',         'color': '0xFFE91E63'},
-    {'name': 'Hip-Hop',     'color': '0xFF9C27B0'},
-    {'name': 'R&B',         'color': '0xFF3F51B5'},
-    {'name': 'Reggaeton',   'color': '0xFF009688'},
-    {'name': 'Rock',        'color': '0xFFFF5722'},
-    {'name': 'Electronic',  'color': '0xFF00BCD4'},
-    {'name': 'Jazz',        'color': '0xFF795548'},
-    {'name': 'Classical',   'color': '0xFF607D8B'},
-    {'name': 'Afrobeats',   'color': '0xFF1B5E20'},
-    {'name': 'French Rap',  'color': '0xFF212121'},
-    {'name': 'K-Pop',       'color': '0xFF00BCD4'},
-    {'name': 'Lo-Fi',       'color': '0xFF37474F'},
+    _mfyItem(
+      'mfy-1',
+      'Daily Mix 1',
+      'The Weeknd, SZA and more',
+      albumById('1')?.imageUrl ?? '',
+      const Color(0xFFB71C1C),
+      ['1-9', '4-9', '1-2', '4-2', '1-7'],
+    ),
+    _mfyItem(
+      'mfy-2',
+      'Daily Mix 2',
+      'Kendrick Lamar, Drake and more',
+      albumById('2')?.imageUrl ?? '',
+      const Color(0xFF4A148C),
+      ['2-8', '18-12', '2-2', '19-5', '20-5'],
+    ),
+    _mfyItem(
+      'mfy-3',
+      'Daily Mix 3',
+      'Nekfeu, Josman and more',
+      albumById('24')?.imageUrl ?? '',
+      const Color(0xFF212121),
+      ['24-1', '22-1', '25-1', '23-2', '26-1'],
+    ),
+    _mfyItem(
+      'mfy-4',
+      'Discover Weekly',
+      'Fresh picks for you',
+      albumById('21')?.imageUrl ?? '',
+      const Color(0xFF1B5E20),
+      ['21-2', '30-2', '16-2'],
+    ),
+    _mfyItem(
+      'mfy-5',
+      'Release Radar',
+      'New music from artists you follow',
+      albumById('35')?.imageUrl ?? '',
+      const Color(0xFF006064),
+      ['35-1', '35-2', '34-1'],
+    ),
   ];
 
+  static DisplayItem _mfyItem(
+    String id,
+    String title,
+    String desc,
+    String img,
+    Color color,
+    List<String> trackIds,
+  ) => DisplayItem(
+    id: id,
+    title: title,
+    description: desc,
+    imageUrl: img,
+    color: color,
+    tracks: tracksForIds(trackIds),
+  );
+
+  static List<DisplayItem> get topCharts => ['5', '4', '3', '7', '10']
+      .map(albumById)
+      .whereType<SpotifyAlbum>()
+      .map(DisplayItem.fromAlbum)
+      .toList();
+
+  static List<DisplayItem> get newReleases => ['35', '34', '8', '9', '11']
+      .map(albumById)
+      .whereType<SpotifyAlbum>()
+      .map(DisplayItem.fromAlbum)
+      .toList();
+
+  static final List<SpotifyCategory> searchCategories = [
+    SpotifyCategory(
+      name: 'Pop',
+      color: const Color(0xFFE91E63),
+      imageUrl: _categoryImage('pop.jpg'),
+      heroImageUrl: _categoryImage('pop.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Hip-Hop',
+      color: const Color(0xFF9C27B0),
+      imageUrl: _categoryImage('hip-hop.jpg'),
+      heroImageUrl: _categoryImage('hip-hop.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'R&B',
+      color: const Color(0xFF3F51B5),
+      imageUrl: _categoryImage('rnb.jpg'),
+      heroImageUrl: _categoryImage('rnb.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Reggaeton',
+      color: const Color(0xFF009688),
+      imageUrl: _categoryImage('reggaeton.jpg'),
+      heroImageUrl: _categoryImage('reggaeton.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Rock',
+      color: const Color(0xFFFF5722),
+      imageUrl: _categoryImage('rock.jpg'),
+      heroImageUrl: _categoryImage('rock.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Electronic',
+      color: const Color(0xFF00BCD4),
+      imageUrl: _categoryImage('electronic.jpg'),
+      heroImageUrl: _categoryImage('electronic.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Jazz',
+      color: const Color(0xFF795548),
+      imageUrl: _categoryImage('jazz.jpg'),
+      heroImageUrl: _categoryImage('jazz.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Classical',
+      color: const Color(0xFF607D8B),
+      imageUrl: _categoryImage('classical.jpg'),
+      heroImageUrl: _categoryImage('classical.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Afrobeats',
+      color: const Color(0xFF1B5E20),
+      imageUrl: _categoryImage('afrobeats.jpg'),
+      heroImageUrl: _categoryImage('afrobeats.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'French Rap',
+      color: const Color(0xFF212121),
+      imageUrl: _categoryImage('french-rap.jpg'),
+      heroImageUrl: _categoryImage('french-rap.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'K-Pop',
+      color: const Color(0xFF008CDE),
+      imageUrl: _categoryImage('k-pop.jpg'),
+      heroImageUrl: _categoryImage('k-pop.jpg'),
+    ),
+    SpotifyCategory(
+      name: 'Lo-Fi',
+      color: const Color(0xFF37474F),
+      imageUrl: _categoryImage('lo-fi.jpg'),
+      heroImageUrl: _categoryImage('lo-fi.jpg'),
+    ),
+  ];
+
+  static String _categoryImage(String fileName) =>
+      'assets/images/search categories/$fileName';
+
+  static List<CategorySection> sectionsForCategory(SpotifyCategory category) {
+    final allItems = _itemsForCategory(category.name);
+    final releases = _releaseItemsForCategory(category.name);
+    final essentials = _essentialItemsForCategory(category);
+
+    return [
+      CategorySection(title: 'All Things ${category.name}', items: allItems),
+      CategorySection(title: 'New ${category.name} Releases', items: releases),
+      CategorySection(title: '${category.name} Essentials', items: essentials),
+    ].where((section) => section.items.isNotEmpty).toList();
+  }
+
+  static List<DisplayItem> _itemsForCategory(String name) {
+    switch (name) {
+      case 'Pop':
+        return _itemsFromAlbumIds(['3', '6', '8', '10', '29']);
+      case 'Hip-Hop':
+        return _itemsFromAlbumIds([
+          '2',
+          '7',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '18',
+          '19',
+          '20',
+          '21',
+        ]);
+      case 'R&B':
+        return _itemsFromAlbumIds(['1', '4', '11', '32', '33']);
+      case 'Reggaeton':
+        return _itemsFromAlbumIds(['5']);
+      case 'Afrobeats':
+        return _itemsFromAlbumIds(['30']);
+      case 'French Rap':
+        return _itemsFromAlbumIds([
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '31',
+        ]);
+      case 'Lo-Fi':
+        return _itemsFromAlbumIds(['29']);
+      default:
+        return [_categoryMixForName(name)];
+    }
+  }
+
+  static List<DisplayItem> _releaseItemsForCategory(String name) {
+    switch (name) {
+      case 'Pop':
+        return _itemsFromAlbumIds(['8', '10', '3']);
+      case 'Hip-Hop':
+        return _itemsFromAlbumIds(['35', '34', '17', '13', '14']);
+      case 'R&B':
+        return _itemsFromAlbumIds(['33', '32', '4']);
+      case 'Reggaeton':
+        return _itemsFromAlbumIds(['5']);
+      case 'Afrobeats':
+        return _itemsFromAlbumIds(['30']);
+      case 'French Rap':
+        return _itemsFromAlbumIds(['28', '27', '23', '31']);
+      case 'Lo-Fi':
+        return _itemsFromAlbumIds(['29']);
+      default:
+        return [_categoryMixForName(name, release: true)];
+    }
+  }
+
+  static List<DisplayItem> _essentialItemsForCategory(
+    SpotifyCategory category,
+  ) {
+    final base = _itemsForCategory(category.name);
+    final mixes = <DisplayItem>[_categoryMixForName(category.name)];
+    if (base.length <= 1) return [...base, ...mixes];
+    return [...base.take(4), ...mixes];
+  }
+
+  static List<DisplayItem> _itemsFromAlbumIds(List<String> ids) => ids
+      .map(albumById)
+      .whereType<SpotifyAlbum>()
+      .map(DisplayItem.fromAlbum)
+      .toList();
+
+  static DisplayItem _categoryMixForName(String name, {bool release = false}) {
+    final category = searchCategories.firstWhere(
+      (c) => c.name == name,
+      orElse: () => searchCategories.first,
+    );
+    final tracks = _trackIdsForCategory(name, release: release);
+    final suffix = release ? 'Fresh Finds' : 'Mix';
+    final description = release
+        ? 'New sounds and fresh picks for $name'
+        : 'A handpicked $name set for your mood';
+
+    return DisplayItem(
+      id: 'category-${name.toLowerCase().replaceAll(' ', '-')}-${release ? 'fresh' : 'mix'}',
+      title: '$name $suffix',
+      description: description,
+      imageUrl: category.imageUrl,
+      color: category.color,
+      tracks: tracksForIds(tracks),
+    );
+  }
+
+  static List<String> _trackIdsForCategory(
+    String name, {
+    bool release = false,
+  }) {
+    switch (name) {
+      case 'Pop':
+        return release
+            ? ['8-1', '10-1', '3-3', '6-3']
+            : ['3-3', '6-1', '8-2', '10-2', '29-1'];
+      case 'Hip-Hop':
+        return release
+            ? ['35-1', '34-1', '17-1', '13-2']
+            : ['2-8', '7-3', '18-12', '20-5', '21-2'];
+      case 'R&B':
+        return release
+            ? ['33-1', '32-1', '4-2']
+            : ['1-9', '4-9', '11-2', '32-4', '33-2'];
+      case 'Reggaeton':
+        return ['5-2', '5-3', '5-4', '5-5', '5-6'];
+      case 'Afrobeats':
+        return ['30-1', '30-2', '30-3', '30-4', '30-5'];
+      case 'French Rap':
+        return release
+            ? ['28-1', '27-1', '23-1', '31-2']
+            : ['24-1', '22-1', '25-1', '31-1', '27-2'];
+      case 'Lo-Fi':
+        return ['29-1', '29-2', '29-3', '29-4', '29-5'];
+      case 'Rock':
+        return ['8-3', '9-2', '10-4', '7-5', '16-3'];
+      case 'Electronic':
+        return ['6-1', '10-1', '1-9', '8-2', '5-4'];
+      case 'Jazz':
+        return ['11-1', '11-2', '1-4', '4-11', '29-4'];
+      case 'Classical':
+        return ['3-9', '11-3', '1-4', '4-19', '29-5'];
+      case 'K-Pop':
+        return ['3-8', '6-2', '8-1', '10-3', '29-6'];
+      default:
+        return ['1-9', '2-8', '3-3', '4-2', '5-2'];
+    }
+  }
+
   static final List<String> _savedAlbumIds = [
-    '1', '2', '4', '7', '13', '18', '24', '35', '34', '31', '22', '16'
+    '1',
+    '2',
+    '4',
+    '7',
+    '13',
+    '18',
+    '24',
+    '35',
+    '34',
+    '31',
+    '22',
+    '16',
   ];
 
   static List<SpotifyAlbum> get savedAlbums =>
@@ -172,8 +460,12 @@ static List<DisplayItem> get newReleases => [
 
   static const List<Map<String, dynamic>> _rawAlbums = [
     {
-      'id': '1', 'title': 'After Hours', 'artist': 'The Weeknd',
-      'year': '2020', 'genre': 'R&B', 'color': '0xFFB71C1C',
+      'id': '1',
+      'title': 'After Hours',
+      'artist': 'The Weeknd',
+      'year': '2020',
+      'genre': 'R&B',
+      'color': '0xFFB71C1C',
       'imageUrl': 'assets/images/spotify albums/The_Weeknd_-_After_Hours.jpg',
       'tracks': [
         {'id': '1-1', 'title': 'Alone Again', 'duration': '4:10'},
@@ -192,8 +484,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '2', 'title': 'DAMN.', 'artist': 'Kendrick Lamar',
-      'year': '2017', 'genre': 'Hip-Hop', 'color': '0xFFB71C1C',
+      'id': '2',
+      'title': 'DAMN.',
+      'artist': 'Kendrick Lamar',
+      'year': '2017',
+      'genre': 'Hip-Hop',
+      'color': '0xFFB71C1C',
       'imageUrl': 'assets/images/spotify albums/Kendrick_Lamar_-_Damn.png',
       'tracks': [
         {'id': '2-1', 'title': 'BLOOD.', 'duration': '1:59'},
@@ -213,8 +509,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '3', 'title': 'Midnights', 'artist': 'Taylor Swift',
-      'year': '2022', 'genre': 'Pop', 'color': '0xFF1A237E',
+      'id': '3',
+      'title': 'Midnights',
+      'artist': 'Taylor Swift',
+      'year': '2022',
+      'genre': 'Pop',
+      'color': '0xFF1A237E',
       'imageUrl': 'assets/images/spotify albums/Midnights_-_Taylor_Swift.png',
       'tracks': [
         {'id': '3-1', 'title': 'Lavender Haze', 'duration': '3:22'},
@@ -232,8 +532,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '4', 'title': 'SOS', 'artist': 'SZA',
-      'year': '2022', 'genre': 'R&B', 'color': '0xFF006064',
+      'id': '4',
+      'title': 'SOS',
+      'artist': 'SZA',
+      'year': '2022',
+      'genre': 'R&B',
+      'color': '0xFF006064',
       'imageUrl': 'assets/images/spotify albums/SZA_-_S.O.S.png',
       'tracks': [
         {'id': '4-1', 'title': 'SOS', 'duration': '1:45'},
@@ -262,9 +566,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '5', 'title': 'Un Verano Sin Ti', 'artist': 'Bad Bunny',
-      'year': '2022', 'genre': 'Reggaeton', 'color': '0xFF1B5E20',
-      'imageUrl': 'assets/images/spotify albums/Bad_Bunny_-_Un_Verano_Sin_Ti.jpg',
+      'id': '5',
+      'title': 'Un Verano Sin Ti',
+      'artist': 'Bad Bunny',
+      'year': '2022',
+      'genre': 'Reggaeton',
+      'color': '0xFF1B5E20',
+      'imageUrl':
+          'assets/images/spotify albums/Bad_Bunny_-_Un_Verano_Sin_Ti.jpg',
       'tracks': [
         {'id': '5-1', 'title': 'El Apagón', 'duration': '10:16'},
         {'id': '5-2', 'title': 'Moscow Mule', 'duration': '4:41'},
@@ -279,9 +588,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '6', 'title': 'Future Nostalgia', 'artist': 'Dua Lipa',
-      'year': '2020', 'genre': 'Pop', 'color': '0xFF880E4F',
-      'imageUrl': 'assets/images/spotify albums/Dua_Lipa_-_Future_Nostalgia.jpg',
+      'id': '6',
+      'title': 'Future Nostalgia',
+      'artist': 'Dua Lipa',
+      'year': '2020',
+      'genre': 'Pop',
+      'color': '0xFF880E4F',
+      'imageUrl':
+          'assets/images/spotify albums/Dua_Lipa_-_Future_Nostalgia.jpg',
       'tracks': [
         {'id': '6-1', 'title': 'Future Nostalgia', 'duration': '3:04'},
         {'id': '6-2', 'title': 'Don\'t Start Now', 'duration': '3:28'},
@@ -297,8 +611,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '7', 'title': 'ASTROWORLD', 'artist': 'Travis Scott',
-      'year': '2018', 'genre': 'Hip-Hop', 'color': '0xFF4A148C',
+      'id': '7',
+      'title': 'ASTROWORLD',
+      'artist': 'Travis Scott',
+      'year': '2018',
+      'genre': 'Hip-Hop',
+      'color': '0xFF4A148C',
       'imageUrl': 'assets/images/spotify albums/Travis_Scott_-_Astroworld.png',
       'tracks': [
         {'id': '7-1', 'title': 'STARGAZING', 'duration': '3:53'},
@@ -321,12 +639,21 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '8', 'title': 'Happier Than Ever', 'artist': 'Billie Eilish',
-      'year': '2021', 'genre': 'Pop', 'color': '0xFFE0D6CD',
-      'imageUrl': 'assets/images/spotify albums/Billie_Eilish_-_Happier_Than_Ever.jpg',
+      'id': '8',
+      'title': 'Happier Than Ever',
+      'artist': 'Billie Eilish',
+      'year': '2021',
+      'genre': 'Pop',
+      'color': '0xFFE0D6CD',
+      'imageUrl':
+          'assets/images/spotify albums/Billie_Eilish_-_Happier_Than_Ever.jpg',
       'tracks': [
         {'id': '8-1', 'title': 'Getting Older', 'duration': '4:05'},
-        {'id': '8-2', 'title': 'I Didn\'t Change My Number', 'duration': '2:41'},
+        {
+          'id': '8-2',
+          'title': 'I Didn\'t Change My Number',
+          'duration': '2:41',
+        },
         {'id': '8-3', 'title': 'Billie Bossa Nova', 'duration': '3:16'},
         {'id': '8-4', 'title': 'my future', 'duration': '3:31'},
         {'id': '8-5', 'title': 'Oxytocin', 'duration': '3:38'},
@@ -344,9 +671,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '9', 'title': 'Hollywood\'s Bleeding', 'artist': 'Post Malone',
-      'year': '2019', 'genre': 'Pop-Rap', 'color': '0xFF37474F',
-      'imageUrl': 'assets/images/spotify albums/Post_Malone_-_Hollywoods_Bleeding.jpg',
+      'id': '9',
+      'title': 'Hollywood\'s Bleeding',
+      'artist': 'Post Malone',
+      'year': '2019',
+      'genre': 'Pop-Rap',
+      'color': '0xFF37474F',
+      'imageUrl':
+          'assets/images/spotify albums/Post_Malone_-_Hollywoods_Bleeding.jpg',
       'tracks': [
         {'id': '9-1', 'title': 'Hollywood\'s Bleeding', 'duration': '3:06'},
         {'id': '9-2', 'title': 'Saint-Tropez', 'duration': '2:22'},
@@ -368,9 +700,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '10', 'title': 'Thank U, Next', 'artist': 'Ariana Grande',
-      'year': '2019', 'genre': 'Pop', 'color': '0xFF880E4F',
-      'imageUrl': 'assets/images/spotify albums/Ariana_Grande_-_Thank_U_Next.jpg',
+      'id': '10',
+      'title': 'Thank U, Next',
+      'artist': 'Ariana Grande',
+      'year': '2019',
+      'genre': 'Pop',
+      'color': '0xFF880E4F',
+      'imageUrl':
+          'assets/images/spotify albums/Ariana_Grande_-_Thank_U_Next.jpg',
       'tracks': [
         {'id': '10-1', 'title': 'imagine', 'duration': '3:02'},
         {'id': '10-2', 'title': 'needy', 'duration': '2:49'},
@@ -383,12 +720,20 @@ static List<DisplayItem> get newReleases => [
         {'id': '10-9', 'title': 'in my head', 'duration': '3:28'},
         {'id': '10-10', 'title': '7 rings', 'duration': '2:58'},
         {'id': '10-11', 'title': 'thank u, next', 'duration': '3:27'},
-        {'id': '10-12', 'title': 'break up with your girlfriend, i\'m bored', 'duration': '3:10'},
+        {
+          'id': '10-12',
+          'title': 'break up with your girlfriend, i\'m bored',
+          'duration': '3:10',
+        },
       ],
     },
     {
-      'id': '11', 'title': 'Blonde', 'artist': 'Frank Ocean',
-      'year': '2016', 'genre': 'R&B', 'color': '0xFFF57F17',
+      'id': '11',
+      'title': 'Blonde',
+      'artist': 'Frank Ocean',
+      'year': '2016',
+      'genre': 'R&B',
+      'color': '0xFFF57F17',
       'imageUrl': 'assets/images/spotify albums/Frank_Ocean_-_Blonde.jpg',
       'tracks': [
         {'id': '11-1', 'title': 'Nikes', 'duration': '5:14'},
@@ -411,12 +756,21 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '12', 'title': 'The Life of Pablo', 'artist': 'Kanye West',
-      'year': '2016', 'genre': 'Hip-Hop', 'color': '0xFF212121',
-      'imageUrl': 'assets/images/spotify albums/Kanye_West_-_The_Life_of_Pablo.jpg',
+      'id': '12',
+      'title': 'The Life of Pablo',
+      'artist': 'Kanye West',
+      'year': '2016',
+      'genre': 'Hip-Hop',
+      'color': '0xFF212121',
+      'imageUrl':
+          'assets/images/spotify albums/Kanye_West_-_The_Life_of_Pablo.jpg',
       'tracks': [
         {'id': '12-1', 'title': 'Ultralight Beam', 'duration': '5:12'},
-        {'id': '12-2', 'title': 'Father Stretch My Hands Pt. 1', 'duration': '2:22'},
+        {
+          'id': '12-2',
+          'title': 'Father Stretch My Hands Pt. 1',
+          'duration': '2:22',
+        },
         {'id': '12-3', 'title': 'Pt. 2', 'duration': '2:24'},
         {'id': '12-4', 'title': 'Famous', 'duration': '3:55'},
         {'id': '12-5', 'title': 'Feedback', 'duration': '2:44'},
@@ -429,16 +783,28 @@ static List<DisplayItem> get newReleases => [
         {'id': '12-12', 'title': 'Real Friends', 'duration': '4:57'},
         {'id': '12-13', 'title': 'Wolves', 'duration': '3:36'},
         {'id': '12-14', 'title': 'Frank\'s Track', 'duration': '0:36'},
-        {'id': '12-15', 'title': 'Siiiiiiiiilver Surfffffffffffter Surf', 'duration': '4:02'},
+        {
+          'id': '12-15',
+          'title': 'Siiiiiiiiilver Surfffffffffffter Surf',
+          'duration': '4:02',
+        },
         {'id': '12-16', 'title': '30 Hours', 'duration': '5:00'},
         {'id': '12-17', 'title': 'No More Parties in LA', 'duration': '6:31'},
-        {'id': '12-18', 'title': 'Facts (Charlie Heat Version)', 'duration': '3:29'},
+        {
+          'id': '12-18',
+          'title': 'Facts (Charlie Heat Version)',
+          'duration': '3:29',
+        },
         {'id': '12-19', 'title': 'Fade', 'duration': '4:20'},
       ],
     },
     {
-      'id': '13', 'title': '23', 'artist': 'Central Cee',
-      'year': '2022', 'genre': 'Hip-Hop', 'color': '0xFF212121',
+      'id': '13',
+      'title': '23',
+      'artist': 'Central Cee',
+      'year': '2022',
+      'genre': 'Hip-Hop',
+      'color': '0xFF212121',
       'imageUrl': 'assets/images/spotify albums/central cee 23.jpg',
       'tracks': [
         {'id': '13-1', 'title': 'Loading', 'duration': '2:10'},
@@ -449,8 +815,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '14', 'title': 'Can\'t Rush Greatness', 'artist': 'Central Cee',
-      'year': '2022', 'genre': 'Hip-Hop', 'color': '0xFF37474F',
+      'id': '14',
+      'title': 'Can\'t Rush Greatness',
+      'artist': 'Central Cee',
+      'year': '2022',
+      'genre': 'Hip-Hop',
+      'color': '0xFF37474F',
       'imageUrl': 'assets/images/spotify albums/central cee crg.jpg',
       'tracks': [
         {'id': '14-1', 'title': 'Day in the Life', 'duration': '2:50'},
@@ -461,8 +831,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '15', 'title': 'Wild West', 'artist': 'Central Cee',
-      'year': '2021', 'genre': 'Hip-Hop', 'color': '0xFF4A148C',
+      'id': '15',
+      'title': 'Wild West',
+      'artist': 'Central Cee',
+      'year': '2021',
+      'genre': 'Hip-Hop',
+      'color': '0xFF4A148C',
       'imageUrl': 'assets/images/spotify albums/central cee wild west.jpg',
       'tracks': [
         {'id': '15-1', 'title': 'Trap Back', 'duration': '2:30'},
@@ -473,9 +847,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '16', 'title': 'We\'re All Alone in This Together', 'artist': 'Dave',
-      'year': '2021', 'genre': 'Hip-Hop', 'color': '0xFF1A237E',
-      'imageUrl': 'assets/images/spotify albums/Dave_-_We\'re_All_Alone_in_This_Together.jpg',
+      'id': '16',
+      'title': 'We\'re All Alone in This Together',
+      'artist': 'Dave',
+      'year': '2021',
+      'genre': 'Hip-Hop',
+      'color': '0xFF1A237E',
+      'imageUrl':
+          'assets/images/spotify albums/Dave_-_We\'re_All_Alone_in_This_Together.jpg',
       'tracks': [
         {'id': '16-1', 'title': 'Clash', 'duration': '4:10'},
         {'id': '16-2', 'title': 'In the Fire', 'duration': '5:20'},
@@ -486,9 +865,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '17', 'title': 'Split Decision', 'artist': 'Dave & Central Cee',
-      'year': '2023', 'genre': 'Hip-Hop', 'color': '0xFF006064',
-      'imageUrl': 'assets/images/spotify albums/Dave_and_Central_Cee_-_Sprinter.png',
+      'id': '17',
+      'title': 'Split Decision',
+      'artist': 'Dave & Central Cee',
+      'year': '2023',
+      'genre': 'Hip-Hop',
+      'color': '0xFF006064',
+      'imageUrl':
+          'assets/images/spotify albums/Dave_and_Central_Cee_-_Sprinter.png',
       'tracks': [
         {'id': '17-1', 'title': 'Trojan Horse', 'duration': '3:06'},
         {'id': '17-2', 'title': 'Sprinter', 'duration': '3:05'},
@@ -497,8 +881,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '18', 'title': 'Views', 'artist': 'Drake',
-      'year': '2016', 'genre': 'Hip-Hop', 'color': '0xFF37474F',
+      'id': '18',
+      'title': 'Views',
+      'artist': 'Drake',
+      'year': '2016',
+      'genre': 'Hip-Hop',
+      'color': '0xFF37474F',
       'imageUrl': 'assets/images/spotify albums/Drake_-_Views_cover.jpg',
       'tracks': [
         {'id': '18-1', 'title': 'Keep the Family Close', 'duration': '4:58'},
@@ -524,8 +912,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '19', 'title': 'Scorpion', 'artist': 'Drake',
-      'year': '2018', 'genre': 'Hip-Hop', 'color': '0xFF212121',
+      'id': '19',
+      'title': 'Scorpion',
+      'artist': 'Drake',
+      'year': '2018',
+      'genre': 'Hip-Hop',
+      'color': '0xFF212121',
       'imageUrl': 'assets/images/spotify albums/Scorpion_by_Drake.jpg',
       'tracks': [
         {'id': '19-1', 'title': 'Survival', 'duration': '3:28'},
@@ -553,8 +945,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '20', 'title': 'KOD', 'artist': 'J. Cole',
-      'year': '2018', 'genre': 'Hip-Hop', 'color': '0xFF4A148C',
+      'id': '20',
+      'title': 'KOD',
+      'artist': 'J. Cole',
+      'year': '2018',
+      'genre': 'Hip-Hop',
+      'color': '0xFF4A148C',
       'imageUrl': 'assets/images/spotify albums/jcole kod.jpg',
       'tracks': [
         {'id': '20-1', 'title': 'Intro', 'duration': '1:35'},
@@ -571,8 +967,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '21', 'title': 'The Forever Story', 'artist': 'JID',
-      'year': '2022', 'genre': 'Hip-Hop', 'color': '0xFF1B5E20',
+      'id': '21',
+      'title': 'The Forever Story',
+      'artist': 'JID',
+      'year': '2022',
+      'genre': 'Hip-Hop',
+      'color': '0xFF1B5E20',
       'imageUrl': 'assets/images/spotify albums/jid the forever tree.jpg',
       'tracks': [
         {'id': '21-1', 'title': 'Galaxy', 'duration': '2:55'},
@@ -593,8 +993,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '22', 'title': 'J.O.S.', 'artist': 'Josman',
-      'year': '2020', 'genre': 'Hip-Hop', 'color': '0xFF880E4F',
+      'id': '22',
+      'title': 'J.O.S.',
+      'artist': 'Josman',
+      'year': '2020',
+      'genre': 'Hip-Hop',
+      'color': '0xFF880E4F',
       'imageUrl': r'assets/images/spotify albums/Josman - J.O.$.jpg',
       'tracks': [
         {'id': '22-1', 'title': 'Intro', 'duration': '2:06'},
@@ -613,8 +1017,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '23', 'title': 'Split', 'artist': 'Josman',
-      'year': '2020', 'genre': 'Hip-Hop', 'color': '0xFF006064',
+      'id': '23',
+      'title': 'Split',
+      'artist': 'Josman',
+      'year': '2020',
+      'genre': 'Hip-Hop',
+      'color': '0xFF006064',
       'imageUrl': 'assets/images/spotify albums/Josman - split.jpg',
       'tracks': [
         {'id': '23-1', 'title': 'Larmes de Sel (Intro)', 'duration': '1:39'},
@@ -643,8 +1051,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '24', 'title': 'Cyborg', 'artist': 'Nekfeu',
-      'year': '2016', 'genre': 'Hip-Hop', 'color': '0xFF212121',
+      'id': '24',
+      'title': 'Cyborg',
+      'artist': 'Nekfeu',
+      'year': '2016',
+      'genre': 'Hip-Hop',
+      'color': '0xFF212121',
       'imageUrl': 'assets/images/spotify albums/nekfeu cyborg.jpg',
       'tracks': [
         {'id': '24-1', 'title': 'Humanoïde', 'duration': '3:49'},
@@ -667,8 +1079,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '25', 'title': 'Les étoiles vagabondes', 'artist': 'Nekfeu',
-      'year': '2019', 'genre': 'Hip-Hop', 'color': '0xFF1A237E',
+      'id': '25',
+      'title': 'Les étoiles vagabondes',
+      'artist': 'Nekfeu',
+      'year': '2019',
+      'genre': 'Hip-Hop',
+      'color': '0xFF1A237E',
       'imageUrl': 'assets/images/spotify albums/nekfeu etoiles vagabondes.jpg',
       'tracks': [
         {'id': '25-1', 'title': 'Étoiles vagabondes', 'duration': '2:44'},
@@ -687,8 +1103,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '26', 'title': 'Feu', 'artist': 'Nekfeu',
-      'year': '2015', 'genre': 'Hip-Hop', 'color': '0xFFB71C1C',
+      'id': '26',
+      'title': 'Feu',
+      'artist': 'Nekfeu',
+      'year': '2015',
+      'genre': 'Hip-Hop',
+      'color': '0xFFB71C1C',
       'imageUrl': 'assets/images/spotify albums/nekfeu feu.jpg',
       'tracks': [
         {'id': '26-1', 'title': 'Nique les clones, Pt. II', 'duration': '3:52'},
@@ -710,9 +1130,14 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '27', 'title': 'Le monde est méchant', 'artist': 'Niska',
-      'year': '2018', 'genre': 'Hip-Hop', 'color': '0xFF4A148C',
-      'imageUrl': 'assets/images/spotify albums/niska le monde est mechant v2.jpg',
+      'id': '27',
+      'title': 'Le monde est méchant',
+      'artist': 'Niska',
+      'year': '2018',
+      'genre': 'Hip-Hop',
+      'color': '0xFF4A148C',
+      'imageUrl':
+          'assets/images/spotify albums/niska le monde est mechant v2.jpg',
       'tracks': [
         {'id': '27-1', 'title': 'Méchant', 'duration': '3:06'},
         {'id': '27-2', 'title': 'Salé', 'duration': '3:09'},
@@ -730,8 +1155,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '28', 'title': 'Mr Sal', 'artist': 'Niska',
-      'year': '2019', 'genre': 'Hip-Hop', 'color': '0xFF1B5E20',
+      'id': '28',
+      'title': 'Mr Sal',
+      'artist': 'Niska',
+      'year': '2019',
+      'genre': 'Hip-Hop',
+      'color': '0xFF1B5E20',
       'imageUrl': 'assets/images/spotify albums/niska mr sal.jpg',
       'tracks': [
         {'id': '28-1', 'title': 'Méchant', 'duration': '3:05'},
@@ -749,22 +1178,42 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '29', 'title': 'Poems of the Past', 'artist': 'Powfu',
-      'year': '2020', 'genre': 'Pop', 'color': '0xFF37474F',
+      'id': '29',
+      'title': 'Poems of the Past',
+      'artist': 'Powfu',
+      'year': '2020',
+      'genre': 'Pop',
+      'color': '0xFF37474F',
       'imageUrl': 'assets/images/spotify albums/powfu poems of the past.jpg',
       'tracks': [
-        {'id': '29-1', 'title': 'death bed (coffee for your head)', 'duration': '2:53'},
+        {
+          'id': '29-1',
+          'title': 'death bed (coffee for your head)',
+          'duration': '2:53',
+        },
         {'id': '29-2', 'title': 'i could never be loved', 'duration': '2:56'},
-        {'id': '29-3', 'title': 'i don\'t wanna fall in love', 'duration': '2:45'},
-        {'id': '29-4', 'title': 'you were the song I was singing', 'duration': '2:30'},
+        {
+          'id': '29-3',
+          'title': 'i don\'t wanna fall in love',
+          'duration': '2:45',
+        },
+        {
+          'id': '29-4',
+          'title': 'you were the song I was singing',
+          'duration': '2:30',
+        },
         {'id': '29-5', 'title': 'go back', 'duration': '2:20'},
         {'id': '29-6', 'title': 'summer nights', 'duration': '2:55'},
         {'id': '29-7', 'title': 'would look perfect', 'duration': '2:41'},
       ],
     },
     {
-      'id': '30', 'title': 'Outside', 'artist': 'Burna Boy',
-      'year': '2018', 'genre': 'Afrobeats', 'color': '0xFF1B5E20',
+      'id': '30',
+      'title': 'Outside',
+      'artist': 'Burna Boy',
+      'year': '2018',
+      'genre': 'Afrobeats',
+      'color': '0xFF1B5E20',
       'imageUrl': 'assets/images/spotify albums/burna boy outside.jpg',
       'tracks': [
         {'id': '30-1', 'title': 'Heaven\'s Gate', 'duration': '4:05'},
@@ -778,8 +1227,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '31', 'title': 'Lithopédion', 'artist': 'Damso',
-      'year': '2017', 'genre': 'Hip-Hop', 'color': '0xFF212121',
+      'id': '31',
+      'title': 'Lithopédion',
+      'artist': 'Damso',
+      'year': '2017',
+      'genre': 'Hip-Hop',
+      'color': '0xFF212121',
       'imageUrl': 'assets/images/spotify albums/damso lithopedion.jpg',
       'tracks': [
         {'id': '31-1', 'title': 'Black Mirror', 'duration': '3:14'},
@@ -799,8 +1252,12 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '32', 'title': 'Poison ou Antidote', 'artist': 'Dadju',
-      'year': '2019', 'genre': 'R&B', 'color': '0xFF880E4F',
+      'id': '32',
+      'title': 'Poison ou Antidote',
+      'artist': 'Dadju',
+      'year': '2019',
+      'genre': 'R&B',
+      'color': '0xFF880E4F',
       'imageUrl': 'assets/images/spotify albums/dadju poison ou antidote.jpg',
       'tracks': [
         {'id': '32-1', 'title': 'Antidote', 'duration': '3:15'},
@@ -816,176 +1273,220 @@ static List<DisplayItem> get newReleases => [
       ],
     },
     {
-      'id': '33', 'title': 'Héritage', 'artist': 'Dadju',
-      'year': '2020', 'genre': 'R&B', 'color': '0xFF1A237E',
+      'id': '33',
+      'title': 'Héritage',
+      'artist': 'Dadju',
+      'year': '2020',
+      'genre': 'R&B',
+      'color': '0xFF1A237E',
       'imageUrl': 'assets/images/spotify albums/dadju heritage.jpg',
       'tracks': [
-        {'id': '33-1', 'title': 'Dieu merci',         'duration': '3:12'},
-        {'id': '33-2', 'title': 'Va dire à ton ex',   'duration': '3:20'},
+        {'id': '33-1', 'title': 'Dieu merci', 'duration': '3:12'},
+        {'id': '33-2', 'title': 'Va dire à ton ex', 'duration': '3:20'},
         {'id': '33-3', 'title': 'Je ne t\'aime plus', 'duration': '3:18'},
-        {'id': '33-4', 'title': 'Téléphone',          'duration': '3:25'},
-        {'id': '33-5', 'title': 'Par amour',          'duration': '3:30'},
-        {'id': '33-6', 'title': 'Bébé',               'duration': '3:10'},
-        {'id': '33-7', 'title': 'Jaloux 2',           'duration': '3:22'},
-        {'id': '33-8', 'title': 'Amour toxic',        'duration': '3:35'},
+        {'id': '33-4', 'title': 'Téléphone', 'duration': '3:25'},
+        {'id': '33-5', 'title': 'Par amour', 'duration': '3:30'},
+        {'id': '33-6', 'title': 'Bébé', 'duration': '3:10'},
+        {'id': '33-7', 'title': 'Jaloux 2', 'duration': '3:22'},
+        {'id': '33-8', 'title': 'Amour toxic', 'duration': '3:35'},
       ],
     },
     {
-      'id': '34', 'title': 'Boys Club Vol. 1', 'artist': 'Beri Boys',
-      'year': '2025', 'genre': 'Hip-Hop', 'color': '0xFF0C1E1E',
+      'id': '34',
+      'title': 'Boys Club Vol. 1',
+      'artist': 'Beri Boys',
+      'year': '2025',
+      'genre': 'Hip-Hop',
+      'color': '0xFF0C1E1E',
       'imageUrl': 'assets/images/spotify albums/beri boys clu vol1.jpg',
       'tracks': [
-        {'id': '34-1',  'title': 'Nous deux (feat. Bvfy)',                   'duration': '4:27'},
-        {'id': '34-2',  'title': 'On fonctionne',                            'duration': '2:53'},
-        {'id': '34-3',  'title': '10 (feat. Slkrack)',                       'duration': '4:01'},
-        {'id': '34-4',  'title': 'Sors ça',                                  'duration': '3:02'},
-        {'id': '34-5',  'title': 'On nous connait (feat. Khafardo & LJR)',   'duration': '3:32'},
-        {'id': '34-6',  'title': 'Édubé',                                    'duration': '3:33'},
-        {'id': '34-7',  'title': 'Canada',                                   'duration': '2:55'},
-        {'id': '34-8',  'title': 'Kado',                                     'duration': '3:00'},
-        {'id': '34-9',  'title': 'Waka Waka',                                'duration': '2:57'},
-        {'id': '34-10', 'title': 'Té Té Ri Té',                              'duration': '2:45'},
-        {'id': '34-11', 'title': 'Sokoto',                                   'duration': '3:33'},
+        {'id': '34-1', 'title': 'Nous deux (feat. Bvfy)', 'duration': '4:27'},
+        {'id': '34-2', 'title': 'On fonctionne', 'duration': '2:53'},
+        {'id': '34-3', 'title': '10 (feat. Slkrack)', 'duration': '4:01'},
+        {'id': '34-4', 'title': 'Sors ça', 'duration': '3:02'},
+        {
+          'id': '34-5',
+          'title': 'On nous connait (feat. Khafardo & LJR)',
+          'duration': '3:32',
+        },
+        {'id': '34-6', 'title': 'Édubé', 'duration': '3:33'},
+        {'id': '34-7', 'title': 'Canada', 'duration': '2:55'},
+        {'id': '34-8', 'title': 'Kado', 'duration': '3:00'},
+        {'id': '34-9', 'title': 'Waka Waka', 'duration': '2:57'},
+        {'id': '34-10', 'title': 'Té Té Ri Té', 'duration': '2:45'},
+        {'id': '34-11', 'title': 'Sokoto', 'duration': '3:33'},
       ],
     },
     {
-      'id': '35', 'title': 'Beri to the World', 'artist': 'Beri Boys',
-      'year': '2026', 'genre': 'Hip-Hop', 'color': '0xFFCBA068',
+      'id': '35',
+      'title': 'Beri to the World',
+      'artist': 'Beri Boys',
+      'year': '2026',
+      'genre': 'Hip-Hop',
+      'color': '0xFFCBA068',
       'imageUrl': 'assets/images/spotify albums/Beri To The World.jpg',
       'tracks': [
-        {'id': '35-1',  'title': 'God Bless',                             'duration': '3:06'},
-        {'id': '35-2',  'title': 'Sans Soucis',                           'duration': '2:43'},
-        {'id': '35-3',  'title': 'Mbalè (feat. Charlotte Mbango)',        'duration': '3:00'},
-        {'id': '35-4',  'title': "Je t'avais dit",                        'duration': '3:12'},
-        {'id': '35-5',  'title': 'Mariage',                               'duration': '3:15'},
-        {'id': '35-6',  'title': 'Donne moi le temps',                    'duration': '2:59'},
-        {'id': '35-7',  'title': 'Game Over (feat. Trois Officiel)',       'duration': '3:30'},
-        {'id': '35-8',  'title': 'Peux Pas (feat. Ludovic)',               'duration': '3:12'},
-        {'id': '35-9',  'title': 'Multiplier',                            'duration': '2:44'},
-        {'id': '35-10', 'title': 'Stay (feat. Phido)',                     'duration': '3:48'},
-        {'id': '35-11', 'title': 'Call Me',                               'duration': '3:06'},
-        {'id': '35-12', 'title': 'CQSP',                                  'duration': '3:14'},
+        {'id': '35-1', 'title': 'God Bless', 'duration': '3:06'},
+        {'id': '35-2', 'title': 'Sans Soucis', 'duration': '2:43'},
+        {
+          'id': '35-3',
+          'title': 'Mbalè (feat. Charlotte Mbango)',
+          'duration': '3:00',
+        },
+        {'id': '35-4', 'title': "Je t'avais dit", 'duration': '3:12'},
+        {'id': '35-5', 'title': 'Mariage', 'duration': '3:15'},
+        {'id': '35-6', 'title': 'Donne moi le temps', 'duration': '2:59'},
+        {
+          'id': '35-7',
+          'title': 'Game Over (feat. Trois Officiel)',
+          'duration': '3:30',
+        },
+        {'id': '35-8', 'title': 'Peux Pas (feat. Ludovic)', 'duration': '3:12'},
+        {'id': '35-9', 'title': 'Multiplier', 'duration': '2:44'},
+        {'id': '35-10', 'title': 'Stay (feat. Phido)', 'duration': '3:48'},
+        {'id': '35-11', 'title': 'Call Me', 'duration': '3:06'},
+        {'id': '35-12', 'title': 'CQSP', 'duration': '3:14'},
       ],
     },
   ];
 
   static const List<Map<String, dynamic>> _rawArtists = [
     {
-      'id': 'a-1', 'name': 'The Weeknd',
+      'id': 'a-1',
+      'name': 'The Weeknd',
       'imageUrl': 'assets/images/spotify artist/the weeknd.jpg',
       'albumIds': ['1'],
       'genres': ['R&B', 'Pop'],
     },
     {
-      'id': 'a-2', 'name': 'Kendrick Lamar',
+      'id': 'a-2',
+      'name': 'Kendrick Lamar',
       'imageUrl': 'assets/images/spotify artist/kendrick lamar.jpg',
       'albumIds': ['2'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-3', 'name': 'Taylor Swift',
+      'id': 'a-3',
+      'name': 'Taylor Swift',
       'imageUrl': 'assets/images/spotify artist/taylor swift.jpg',
       'albumIds': ['3'],
       'genres': ['Pop'],
     },
     {
-      'id': 'a-4', 'name': 'SZA',
+      'id': 'a-4',
+      'name': 'SZA',
       'imageUrl': 'assets/images/spotify artist/sza.jpg',
       'albumIds': ['4'],
       'genres': ['R&B'],
     },
     {
-      'id': 'a-5', 'name': 'Travis Scott',
+      'id': 'a-5',
+      'name': 'Travis Scott',
       'imageUrl': 'assets/images/spotify artist/travis scott.jpg',
       'albumIds': ['7'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-6', 'name': 'Drake',
+      'id': 'a-6',
+      'name': 'Drake',
       'imageUrl': 'assets/images/spotify artist/drake.jpg',
       'albumIds': ['18', '19'],
       'genres': ['Hip-Hop', 'R&B'],
     },
     {
-      'id': 'a-7', 'name': 'Central Cee',
+      'id': 'a-7',
+      'name': 'Central Cee',
       'imageUrl': 'assets/images/spotify artist/central cee.jpg',
       'albumIds': ['13', '14', '15'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-8', 'name': 'Dave',
+      'id': 'a-8',
+      'name': 'Dave',
       'imageUrl': 'assets/images/spotify artist/dave.jpg',
       'albumIds': ['16'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-9', 'name': 'J. Cole',
+      'id': 'a-9',
+      'name': 'J. Cole',
       'imageUrl': 'assets/images/spotify artist/jcole.jpg',
       'albumIds': ['20'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-10', 'name': 'JID',
+      'id': 'a-10',
+      'name': 'JID',
       'imageUrl': 'assets/images/spotify artist/JID.jpg',
       'albumIds': ['21'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-11', 'name': 'Josman',
+      'id': 'a-11',
+      'name': 'Josman',
       'imageUrl': 'assets/images/spotify artist/josman.jpg',
       'albumIds': ['22', '23'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-12', 'name': 'Nekfeu',
+      'id': 'a-12',
+      'name': 'Nekfeu',
       'imageUrl': 'assets/images/spotify artist/nekfeu.jpg',
       'albumIds': ['24', '25', '26'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-13', 'name': 'Niska',
+      'id': 'a-13',
+      'name': 'Niska',
       'imageUrl': 'assets/images/spotify artist/niska.jpg',
       'albumIds': ['27', '28'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-14', 'name': 'Powfu',
+      'id': 'a-14',
+      'name': 'Powfu',
       'imageUrl': 'assets/images/spotify artist/powfu.png',
       'albumIds': ['29'],
       'genres': ['Pop', 'Lo-Fi'],
     },
     {
-      'id': 'a-15', 'name': 'Burna Boy',
+      'id': 'a-15',
+      'name': 'Burna Boy',
       'imageUrl': 'assets/images/spotify artist/burna boy.jpg',
       'albumIds': ['30'],
       'genres': ['Afrobeats'],
     },
     {
-      'id': 'a-16', 'name': 'Damso',
+      'id': 'a-16',
+      'name': 'Damso',
       'imageUrl': 'assets/images/spotify artist/damso.jpg',
       'albumIds': ['31'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-17', 'name': 'Dadju',
+      'id': 'a-17',
+      'name': 'Dadju',
       'imageUrl': 'assets/images/spotify artist/dadju.jpg',
       'albumIds': ['32', '33'],
       'genres': ['R&B'],
     },
     {
-      'id': 'a-18', 'name': 'Beri Boys',
+      'id': 'a-18',
+      'name': 'Beri Boys',
       'imageUrl': 'assets/images/spotify artist/beri boys.jpg',
       'albumIds': ['34', '35'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-19', 'name': 'Bramsito',
+      'id': 'a-19',
+      'name': 'Bramsito',
       'imageUrl': 'assets/images/spotify artist/bramsito.jpg',
       'albumIds': ['36'],
       'genres': ['Hip-Hop'],
     },
     {
-      'id': 'a-20', 'name': 'Didi B',
+      'id': 'a-20',
+      'name': 'Didi B',
       'imageUrl': 'assets/images/spotify artist/didi b.jpg',
       'albumIds': ['37'],
       'genres': ['Hip-Hop'],

@@ -63,6 +63,7 @@ flutter:
     - assets/spotify_data.json
     - assets/images/spotify albums/
     - assets/images/spotify artist/
+    - assets/images/search categories/
 
   
 
