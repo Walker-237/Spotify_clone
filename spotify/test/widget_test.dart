@@ -12,6 +12,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Browse all'), findsOneWidget);
+    expect(find.text('Discover something new'), findsOneWidget);
     expect(find.text('Pop'), findsWidgets);
     expect(find.text('Hip-Hop'), findsOneWidget);
   });

@@ -1,7 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../data/spotify_data.dart';
 import '../models/display_item.dart';
 import '../models/album.dart';
+import '../models/track.dart';
 import '../pages/category_page.dart';
 import '../widgets/asset_or_net_img.dart';
 import '../utils/nav_helpers.dart';
@@ -14,7 +17,14 @@ class SearchTab extends StatefulWidget {
 
 class _SearchTabState extends State<SearchTab> {
   final _ctrl = TextEditingController();
+  late final List<Track> _discoverTracks;
   String _q = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _discoverTracks = _randomDiscoverTracks();
+  }
 
   List<SpotifyAlbum> get _results => _q.isEmpty
       ? []
@@ -26,6 +36,12 @@ class _SearchTabState extends State<SearchTab> {
                   a.genre.toLowerCase().contains(_q.toLowerCase()),
             )
             .toList();
+
+  List<Track> _randomDiscoverTracks() {
+    final tracks = SpotifyData.albums.expand((album) => album.tracks).toList();
+    tracks.shuffle(math.Random());
+    return tracks.take(8).toList();
+  }
 
   @override
   void dispose() {
@@ -131,36 +147,148 @@ class _SearchTabState extends State<SearchTab> {
 
   Widget _buildBrowse() {
     final categories = SpotifyData.searchCategories;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 18),
-          child: Text(
-            'Browse all',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: _DiscoverSection(tracks: _discoverTracks),
+        ),
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 18, 16, 18),
+            child: Text(
+              'Browse all',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
         ),
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+          sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
               childAspectRatio: 1.66,
             ),
-            itemCount: categories.length,
-            itemBuilder: (_, i) {
-              return _BrowseCategoryCard(category: categories[i]);
-            },
+            delegate: SliverChildBuilderDelegate(
+              (_, i) => _BrowseCategoryCard(category: categories[i]),
+              childCount: categories.length,
+            ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DiscoverSection extends StatelessWidget {
+  final List<Track> tracks;
+
+  const _DiscoverSection({required this.tracks});
+
+  @override
+  Widget build(BuildContext context) {
+    if (tracks.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 2, 16, 18),
+          child: Text(
+            'Discover something new',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              height: 1.05,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 170,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: tracks.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            itemBuilder: (_, i) => _DiscoverCard(track: tracks[i]),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DiscoverCard extends StatelessWidget {
+  final Track track;
+
+  const _DiscoverCard({required this.track});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 136,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(9),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            AssetOrNetImg(url: track.imageUrl, size: 170, fit: BoxFit.cover),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Color(0x66000000),
+                    Color(0xE6000000),
+                  ],
+                  stops: [0.28, 0.62, 1.0],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    track.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w900,
+                      height: 1.05,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    track.artist,
+                    style: const TextStyle(
+                      color: Color(0xFFE5E5E5),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
