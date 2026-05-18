@@ -17,13 +17,13 @@ class SearchTab extends StatefulWidget {
 
 class _SearchTabState extends State<SearchTab> {
   final _ctrl = TextEditingController();
-  late final List<Track> _discoverTracks;
+  late final List<_DiscoverItem> _discoverItems;
   String _q = '';
 
   @override
   void initState() {
     super.initState();
-    _discoverTracks = _randomDiscoverTracks();
+    _discoverItems = _randomDiscoverItems();
   }
 
   List<SpotifyAlbum> get _results => _q.isEmpty
@@ -37,10 +37,19 @@ class _SearchTabState extends State<SearchTab> {
             )
             .toList();
 
-  List<Track> _randomDiscoverTracks() {
-    final tracks = SpotifyData.albums.expand((album) => album.tracks).toList();
-    tracks.shuffle(math.Random());
-    return tracks.take(8).toList();
+  List<_DiscoverItem> _randomDiscoverItems() {
+    final items = SpotifyData.albums
+        .expand(
+          (album) => album.tracks.map(
+            (track) => _DiscoverItem(
+              track: track,
+              tag: '#${album.genre.toLowerCase().replaceAll(' ', '')}',
+            ),
+          ),
+        )
+        .toList();
+    items.shuffle(math.Random());
+    return items.take(8).toList();
   }
 
   @override
@@ -150,7 +159,7 @@ class _SearchTabState extends State<SearchTab> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: _DiscoverSection(tracks: _discoverTracks),
+          child: _DiscoverSection(items: _discoverItems),
         ),
         const SliverToBoxAdapter(
           child: Padding(
@@ -185,14 +194,21 @@ class _SearchTabState extends State<SearchTab> {
   }
 }
 
-class _DiscoverSection extends StatelessWidget {
-  final List<Track> tracks;
+class _DiscoverItem {
+  final Track track;
+  final String tag;
 
-  const _DiscoverSection({required this.tracks});
+  const _DiscoverItem({required this.track, required this.tag});
+}
+
+class _DiscoverSection extends StatelessWidget {
+  final List<_DiscoverItem> items;
+
+  const _DiscoverSection({required this.items});
 
   @override
   Widget build(BuildContext context) {
-    if (tracks.isEmpty) return const SizedBox.shrink();
+    if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,9 +230,9 @@ class _DiscoverSection extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: tracks.length,
+            itemCount: items.length,
             separatorBuilder: (_, __) => const SizedBox(width: 16),
-            itemBuilder: (_, i) => _DiscoverCard(track: tracks[i]),
+            itemBuilder: (_, i) => _DiscoverCard(item: items[i]),
           ),
         ),
       ],
@@ -225,9 +241,9 @@ class _DiscoverSection extends StatelessWidget {
 }
 
 class _DiscoverCard extends StatelessWidget {
-  final Track track;
+  final _DiscoverItem item;
 
-  const _DiscoverCard({required this.track});
+  const _DiscoverCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +254,11 @@ class _DiscoverCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            AssetOrNetImg(url: track.imageUrl, size: 170, fit: BoxFit.cover),
+            AssetOrNetImg(
+              url: item.track.imageUrl,
+              size: 170,
+              fit: BoxFit.cover,
+            ),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -257,33 +277,16 @@ class _DiscoverCard extends StatelessWidget {
               left: 12,
               right: 12,
               bottom: 12,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    track.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w900,
-                      height: 1.05,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    track.artist,
-                    style: const TextStyle(
-                      color: Color(0xFFE5E5E5),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: Text(
+                item.tag,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w900,
+                  height: 1.05,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
