@@ -6,6 +6,8 @@ import '../models/display_item.dart';
 import '../models/album.dart';
 import '../models/track.dart';
 import '../pages/category_page.dart';
+import '../pages/now_playing_page.dart';
+import '../state/player_state.dart';
 import '../widgets/asset_or_net_img.dart';
 import '../utils/nav_helpers.dart';
 
@@ -43,6 +45,7 @@ class _SearchTabState extends State<SearchTab> {
           (album) => album.tracks.map(
             (track) => _DiscoverItem(
               track: track,
+              queue: album.tracks,
               tag: '#${album.genre.toLowerCase().replaceAll(' ', '')}',
             ),
           ),
@@ -196,9 +199,14 @@ class _SearchTabState extends State<SearchTab> {
 
 class _DiscoverItem {
   final Track track;
+  final List<Track> queue;
   final String tag;
 
-  const _DiscoverItem({required this.track, required this.tag});
+  const _DiscoverItem({
+    required this.track,
+    required this.queue,
+    required this.tag,
+  });
 }
 
 class _DiscoverSection extends StatelessWidget {
@@ -247,49 +255,55 @@ class _DiscoverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 136,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(9),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            AssetOrNetImg(
-              url: item.track.imageUrl,
-              size: 170,
-              fit: BoxFit.cover,
-            ),
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Color(0x66000000),
-                    Color(0xE6000000),
-                  ],
-                  stops: [0.28, 0.62, 1.0],
+    return GestureDetector(
+      onTap: () {
+        player.play(item.track, trackList: item.queue);
+        Navigator.push(context, slideRoute(NowPlayingPage(track: item.track)));
+      },
+      child: SizedBox(
+        width: 136,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(9),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              AssetOrNetImg(
+                url: item.track.imageUrl,
+                size: 170,
+                fit: BoxFit.cover,
+              ),
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Color(0x66000000),
+                      Color(0xE6000000),
+                    ],
+                    stops: [0.28, 0.62, 1.0],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 12,
-              right: 12,
-              bottom: 12,
-              child: Text(
-                item.tag,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 21,
-                  fontWeight: FontWeight.w900,
-                  height: 1.05,
+              Positioned(
+                left: 12,
+                right: 12,
+                bottom: 12,
+                child: Text(
+                  item.tag,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w900,
+                    height: 1.05,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
